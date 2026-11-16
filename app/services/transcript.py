@@ -36,7 +36,7 @@ def chunk_transcript(
     while window_start < video_end:
         window_end = window_start + window_seconds
         texts = [
-            s["text"]
+            s["text"].replace("\n", " ")
             for s in snippets
             if window_start <= s["start"] < window_end
         ]

@@ -2,3 +2,4 @@ venv/
 .env
 docs.txt
 test.py
+chroma_db/
