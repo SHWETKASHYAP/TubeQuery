@@ -52,3 +52,10 @@ def chunk_transcript(
 
 def make_timestamp_link(video_id: str, start: int) -> str:
     return f"https://youtube.com/watch?v={video_id}&t={start}s"
+
+def format_timestamp(seconds: int) -> str:
+    minutes, secs = divmod(seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    if hours:
+        return f"{hours}:{minutes:02d}:{secs:02d}"
+    return f"{minutes}:{secs:02d}"

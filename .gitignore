@@ -3,3 +3,4 @@ venv/
 docs.txt
 test.py
 chroma_db/
+list_models.py
