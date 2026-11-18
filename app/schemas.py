@@ -8,6 +8,7 @@ class IngestRequest(BaseModel):
 class IngestResponse(BaseModel):
     video_id: str
     chunks_stored: int
+    cached: bool = False
 
 
 class AskRequest(BaseModel):

@@ -8,6 +8,7 @@ from app.services.transcript import (
 )
 from app.services.vector_store import store_chunks, search_chunks
 from app.services.llm import generate_answer
+from app.services.video_state import get_video, mark_completed
 
 app = FastAPI(title="TubeQuery")
 
@@ -23,6 +24,17 @@ def ingest(req: IngestRequest):
     except (ValueError, KeyError):
         raise HTTPException(status_code=400, detail="Not a valid YouTube video URL")
 
+    # Check if the video has already been ingested and cached in Redis
+    existing = get_video(video_id)
+    if existing.get("status") == "COMPLETED":
+        return IngestResponse(
+            video_id=video_id,
+            chunks_stored=int(existing.get("chunks", 0)),
+            cached=True,
+        )
+
+    # if not cached, fetch the transcript, chunk it, and store it in the vector store
+
     try:
         snippets = fetch_transcript(video_id)
     except Exception:
@@ -33,6 +45,7 @@ def ingest(req: IngestRequest):
 
     chunks = chunk_transcript(snippets)
     stored = store_chunks(video_id, chunks)
+    mark_completed(video_id, stored)
     return IngestResponse(video_id=video_id, chunks_stored=stored)
 
 
